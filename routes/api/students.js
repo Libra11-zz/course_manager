@@ -27,21 +27,21 @@ router.post("/studentregister", (req, res) => {
         r: "pg",
         d: "mm"
       });
-
       const newStudent = new Student({
         pid: req.body.pid,
         name: req.body.name,
         grade: req.body.grade,
         avatar,
-        password: req.body.password,
+        firstpwd: req.body.password,
         identity: req.body.identity
       });
+      console.log(JSON.stringify(newStudent))
 
-      bcrypt.genSalt(10, function(err, salt) {
-        bcrypt.hash(newStudent.password, salt, (err, hash) => {
+      bcrypt.genSalt(10, function (err, salt) {
+        bcrypt.hash(newStudent.firstpwd, salt, (err, hash) => {
           if (err) throw err;
 
-          newStudent.password = hash;
+          newStudent.firstpwd = hash;
 
           newStudent
             .save()
@@ -57,16 +57,18 @@ router.post("/studentregister", (req, res) => {
 // @desc   返回token jwt passport
 // @access public
 router.post("/studentlogin", (req, res) => {
-  console.log(req.body);
   const pid = req.body.pid;
   const password = req.body.password;
   // 查询数据库
   Student.findOne({ pid }).then(student => {
+    console.log(JSON.stringify(student))
     if (!student) {
       return res.status(401).json("用户不存在!");
     }
     // 密码匹配
-    bcrypt.compare(password, student.password).then(isMatch => {
+    console.log(password)
+    console.log(student.firstpwd)
+    bcrypt.compare(password, student.firstpwd).then(isMatch => {
       if (isMatch) {
         const rule = {
           id: student.id,
@@ -113,46 +115,46 @@ router.get(
   (req, res) => {
     // 拿到参数
     const page_size = Number(url.parse(req.url, true).query.page_size)
-		const page_index = Number(url.parse(req.url, true).query.page_index) - 1
-		const sort = url.parse(req.url, true).query.sort
-		const keyword = url.parse(req.url, true).query.keyword
-		const sortItem = url.parse(req.url, true).query.sortItem
-		// 模糊查询
-		if(keyword == undefined || keyword == ''){
-			var findFiler = {}; // 检索全部
-		}else{// 使用正则表达式的构造函数将字符串转为再正则对象
-			const regexp = new RegExp(keyword, 'g');
-			var findFiler = {
-				$or : [
-					{'pid': regexp},
-					{'name': regexp},
-					{'grade': regexp},
-					{'course': regexp}
-				]
-			}
-		}
-		let sortNumber
-		if(sort == 'ascending'){
-			sortNumber = -1
-		}else if(sort == 'descending') {
-			sortNumber = 1
-		}else{
-			sortNumber = -1
-		}
-		
+    const page_index = Number(url.parse(req.url, true).query.page_index) - 1
+    const sort = url.parse(req.url, true).query.sort
+    const keyword = url.parse(req.url, true).query.keyword
+    const sortItem = url.parse(req.url, true).query.sortItem
+    // 模糊查询
+    if (keyword == undefined || keyword == '') {
+      var findFiler = {}; // 检索全部
+    } else {// 使用正则表达式的构造函数将字符串转为再正则对象
+      const regexp = new RegExp(keyword, 'g');
+      var findFiler = {
+        $or: [
+          { 'pid': regexp },
+          { 'name': regexp },
+          { 'grade': regexp },
+          { 'course': regexp }
+        ]
+      }
+    }
+    let sortNumber
+    if (sort == 'ascending') {
+      sortNumber = -1
+    } else if (sort == 'descending') {
+      sortNumber = 1
+    } else {
+      sortNumber = -1
+    }
+
     // const sidx = url.parse(req.url, true).query.sidx;
     // const sord = url.parse(req.url, true).query.sord;
     // const keyword = url.parse(req.url, true).query.keyword;
     Student.countDocuments(findFiler, (err, count) => {
-			const sortobj = {}
-			sortobj[sortItem] = sortNumber
-			Student.find(findFiler).sort(sortobj).limit(page_size).skip(page_size * page_index).exec((err, student) => {
-				if (!student) {
+      const sortobj = {}
+      sortobj[sortItem] = sortNumber
+      Student.find(findFiler).sort(sortobj).limit(page_size).skip(page_size * page_index).exec((err, student) => {
+        if (!student) {
           return res.status(404).json("没有任何内容")
         }
-        res.json({'total': count, 'data': student})
-			})
-		})
+        res.json({ 'total': count, 'data': student })
+      })
+    })
   }
 );
 
@@ -226,26 +228,26 @@ router.post(
 
 // 更改学生
 router.post('/changestudent', passport.authenticate('jwt', { session: false }),
-(req, res) => {
-	const updatefileds = {}
-	const _id = req.body._id
-	updatefileds.pid = req.body.pid
-	updatefileds.grade = req.body.grade
-	updatefileds.name = req.body.name
-	Student.findOneAndUpdate(
-		{_id: _id},
-		{$set: updatefileds},
-		{new: true}).then(student => {
-			res.json(student)
-		})
-})
+  (req, res) => {
+    const updatefileds = {}
+    const _id = req.body._id
+    updatefileds.pid = req.body.pid
+    updatefileds.grade = req.body.grade
+    updatefileds.name = req.body.name
+    Student.findOneAndUpdate(
+      { _id: _id },
+      { $set: updatefileds },
+      { new: true }).then(student => {
+        res.json(student)
+      })
+  })
 
 // 删除学生
 router.delete(
   '/deletestu',
   passport.authenticate('jwt', { session: false }),
   (req, res) => {
-		console.log(url.parse(req.url, true).query._id)
+    console.log(url.parse(req.url, true).query._id)
     Student.findOneAndRemove({ _id: url.parse(req.url, true).query._id })
       .then(student => {
         student.save().then(student => res.json(student))
