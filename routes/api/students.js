@@ -12,6 +12,7 @@ const path = require("path");
 const fs = require("fs");
 const url = require("url");
 const xlsx = require("node-xlsx");
+const ObjectID = require("mongodb").ObjectID;
 
 // @route  POST api/users/register 模拟注册
 // @desc   返回的请求的json数据
@@ -66,9 +67,10 @@ router.post("/studentlogin", (req, res) => {
       return res.status(401).json("用户不存在!");
     }
     // 密码匹配
-    console.log(password)
-    console.log(student.firstpwd)
     bcrypt.compare(password, student.firstpwd).then(isMatch => {
+      console.log(password)
+      console.log(student.firstpwd)
+      console.log(isMatch)
       if (isMatch) {
         const rule = {
           id: student.id,
@@ -81,6 +83,8 @@ router.post("/studentlogin", (req, res) => {
           if (err) throw err;
           res.json({
             success: true,
+            name: student.name,
+            pid: student.pid,
             token: "Bearer " + token
           });
         });
@@ -166,19 +170,25 @@ router.post(
   passport.authenticate("jwt", { session: false }),
   (req, res) => {
     const studentFields = {};
-    const str =
-      "ABCDEFGHIJKLMNPQRSTUVWSYZabcdefghijklmnpqrstuvwsyz123456789@#$%*";
+    // const str =
+    //   "ABCDEFGHIJKLMNPQRSTUVWSYZabcdefghijklmnpqrstuvwsyz123456789@#$%*";
     if (req.body.pid) studentFields.pid = req.body.pid;
     if (req.body.name) studentFields.name = req.body.name;
     if (req.body.grade) studentFields.grade = req.body.grade;
-    let firstpwd = "";
-    for (let m = 0; m < 6; m++) {
-      firstpwd += str.charAt(parseInt(str.length * Math.random()));
-    }
-    studentFields.firstpwd = firstpwd;
-    new Student(studentFields).save().then(student => {
-      res.json(student);
-    });
+    let firstpwd = "111111";
+    bcrypt.genSalt(10, function (err, salt) {
+      bcrypt.hash(firstpwd, salt, (err, hash) => {
+        if (err) throw err;
+        studentFields.firstpwd = hash;
+        new Student(studentFields).save().then(student => {
+          res.json(student);
+        });
+      });
+    })
+
+    // for (let m = 0; m < 6; m++) {
+    //   firstpwd += str.charAt(parseInt(str.length * Math.random()));
+    // }
   }
 );
 
@@ -243,16 +253,19 @@ router.post('/changestudent', passport.authenticate('jwt', { session: false }),
   })
 
 // 删除学生
-router.delete(
+router.post(
   '/deletestu',
   passport.authenticate('jwt', { session: false }),
   (req, res) => {
     console.log(url.parse(req.url, true).query._id)
-    Student.findOneAndRemove({ _id: url.parse(req.url, true).query._id })
-      .then(student => {
-        student.save().then(student => res.json(student))
+    Student.deleteOne({ _id: ObjectID(req.body.id) })
+      .then(result => {
+        res.json(result)
       })
-      .catch(err => res.status(404).json('删除失败!'));
+      .catch(err => {
+        console.log(err)
+        res.status(404).json('删除失败!')
+      });
   }
 );
 module.exports = router;

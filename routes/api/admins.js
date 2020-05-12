@@ -15,7 +15,7 @@ router.post('/adminregister', (req, res) => {
   // 查询数据库中是否拥有邮箱
   Student.findOne({ pid: req.body.pid }).then(admin => {
     if (admin) {
-			return res.status(400).json('id已被注册!');
+      return res.status(400).json('id已被注册!');
     } else {
       const avatar = gravatar.url(req.body.gravatar, {
         s: '200',
@@ -24,14 +24,14 @@ router.post('/adminregister', (req, res) => {
       });
 
       const newAdmin = new Admin({
-				pid: req.body.pid,
+        pid: req.body.pid,
         name: req.body.name,
         avatar,
         password: req.body.password,
         identity: req.body.identity
       });
 
-      bcrypt.genSalt(10, function(err, salt) {
+      bcrypt.genSalt(10, function (err, salt) {
         bcrypt.hash(newAdmin.password, salt, (err, hash) => {
           if (err) throw err;
 
@@ -55,24 +55,25 @@ router.post('/adminlogin', (req, res) => {
   const password = req.body.password;
   // 查询数据库
   Admin.findOne({ pid }).then(admin => {
-    if (!admin) {	
-				return res.status(404).json('用户不存在!')
+    if (!admin) {
+      return res.status(404).json('用户不存在!')
     }
 
     // 密码匹配
     bcrypt.compare(password, admin.password).then(isMatch => {
       if (isMatch) {
         const rule = {
-					id: admin.id,
-					pid: admin.pid,
-					name: admin.name,
-					avatar: admin.avatar,
-					identity: admin.identity
+          id: admin.id,
+          pid: admin.pid,
+          name: admin.name,
+          avatar: admin.avatar,
+          identity: admin.identity
         }
         jwt.sign(rule, keys.secretOrKey, { expiresIn: 3600 }, (err, token) => {
           if (err) throw err;
           res.json({
             success: true,
+            name: admin.name,
             token: 'Bearer ' + token
           });
         });
@@ -91,7 +92,7 @@ router.get(
   '/acurrent',
   passport.authenticate('jwt', { session: false }),
   (req, res) => {
-		console.log(req)
+    console.log(req)
     res.json({
       pid: req.user.pid,
       name: req.user.name,

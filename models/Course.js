@@ -5,38 +5,41 @@ const courseSchema = new mongoose.Schema({
 		type: String,
 		tequired: true
 	},
-	name:{
-		type: String,
-		required:true 
-	},
-	tname:{
-		type: String,
-		required:true
-	},
-	time:{
-		type: String,
-		required:true
-	},
-	num:{
-		type: Number,
-		required:true
-	},
-	lnum:{
-		type: Number,
-		default: 0
-		
-	},
-	grade:{
+	name: {
 		type: String,
 		required: true
 	},
-	student:{
+	tname: {
+		type: String,
+		required: true
+	},
+	time: {
+		type: String,
+		required: true
+	},
+	num: {
+		type: Number,
+		required: true
+	},
+	lnum: {
+		type: Number,
+		default: 0
+	},
+	yibaoming: {
+		type: Array,
+		default: []
+	},
+	grade: {
+		type: String,
+		required: true
+	},
+	student: {
 		type: Array,
 		default: []
 	},
 })
 
-courseSchema.statics.addOneCourse = function(data, callback){
+courseSchema.statics.addOneCourse = function (data, callback) {
 	const c = new Course(data);
 	c.save(callback);
 }

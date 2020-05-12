@@ -17,15 +17,14 @@
         <el-form-item label="报名人数">
           <el-input v-model="dialogForm.num"></el-input>
         </el-form-item>
-				<el-form-item label="报名年级">
+        <el-form-item label="报名年级">
           <el-input v-model="dialogForm.grade"></el-input>
         </el-form-item>
-			</el-form>
+      </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="dialogAddCourse = false">取 消</el-button>
         <el-button type="primary" @click="submit_add">确 定</el-button>
       </div>
-			
     </el-dialog>
     <el-dialog title="修改教师信息" :visible.sync="dialogChangeCourse" width="600px">
       <el-form :model="changeForm" label-position="right" label-width="80px">
@@ -44,7 +43,7 @@
         <el-form-item label="报名人数">
           <el-input v-model="changeForm.num"></el-input>
         </el-form-item>
-				<el-form-item label="报名年级">
+        <el-form-item label="报名年级">
           <el-input v-model="changeForm.grade"></el-input>
         </el-form-item>
       </el-form>
@@ -78,9 +77,9 @@
           <el-table-column prop="name" label="课程名称" width="150" align="center"></el-table-column>
           <el-table-column prop="tname" label="授课教师" width="120" align="center"></el-table-column>
           <el-table-column prop="time" label="开课时间" width="150" align="center"></el-table-column>
-					<el-table-column prop="num" label="可报名人数" width="120" align="center"></el-table-column>
+          <el-table-column prop="num" label="可报名人数" width="120" align="center"></el-table-column>
           <el-table-column prop="lnum" label="剩余人数" width="120" align="center"></el-table-column>
-					<el-table-column prop="grade" label="报名年级" width="200" align="center"></el-table-column>
+          <el-table-column prop="grade" label="报名年级" width="200" align="center"></el-table-column>
           <el-table-column label="操作" align="center" width="150">
             <template slot-scope="scope">
               <el-button size="mini" @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
@@ -121,21 +120,21 @@ export default {
         //  增加课程默认值
         pid: "",
         name: "",
-				tname: "",
-				grade: "",
-				time:"",
-				num: "",
-				lnum: ""
+        tname: "",
+        grade: "",
+        time: "",
+        num: "",
+        lnum: ""
       },
       changeForm: {
         // 修改课程弹框默认值
         pid: "",
         name: "",
-				tname: "",
-				grade: "",
-				time:"",
-				num: "",
-				lnum: ""
+        tname: "",
+        grade: "",
+        time: "",
+        num: "",
+        lnum: ""
       },
       paginations: {
         // 分页默认参数
@@ -232,14 +231,14 @@ export default {
     },
 
     handleEdit(index, data) {
-			// 编辑单个课程信息
+      // 编辑单个课程信息
       this.changeForm._id = data._id;
       this.changeForm.pid = data.pid;
       this.changeForm.name = data.name;
-			this.changeForm.tname = data.tname;
-			this.changeForm.num = data.num;
-			this.changeForm.grade = data.grade;
-			this.changeForm.time = data.time;
+      this.changeForm.tname = data.tname;
+      this.changeForm.num = data.num;
+      this.changeForm.grade = data.grade;
+      this.changeForm.time = data.time;
       this.dialogChangeCourse = true;
     },
 
@@ -247,7 +246,7 @@ export default {
       // 删除单个课程
       if (!confirm("确定删除吗？")) {
         return;
-			}
+      }
       this.$http
         .delete("/users/deletecou", {
           params: {

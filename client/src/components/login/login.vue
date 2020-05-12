@@ -78,37 +78,47 @@ export default {
   methods: {
     // 登录请求
     handleLogin(formName) {
-      let path
-      		switch (this.formUser.identity) {
-      			case 'student':
-      				path = '/users/studentlogin'
-      				break
-      			case 'teacher':
-      				path = '/users/teacherlogin'
-      				break
-      			case 'admin':
-      				path = '/users/adminlogin'
-      				break
-      		}
+      let path;
+      switch (this.formUser.identity) {
+        case "student":
+          path = "/users/studentlogin";
+          break;
+        case "teacher":
+          path = "/users/teacherlogin";
+          break;
+        case "admin":
+          path = "/users/adminlogin";
+          break;
+      }
       this.$refs[formName].validate(valid => {
         if (valid) {
-          this.$http.post(path, this.formUser).then(res => {
-						console.log(res)
-						// token
-						const { token } = res.data;
-						window.localStorage.setItem('token', token)
+          this.$http
+            .post(path, this.formUser)
+            .then(res => {
+              console.log(res);
+              // token
+              const { token, name } = res.data;
+              window.localStorage.setItem("token", token);
+              window.localStorage.setItem("name", name);
 
-            this.$message({
-              message: "登录成功",
-              type: "success"
-						})
-						this.$router.push({name: 'index'})
-          }).catch(error => {
-						this.$message({
-              message: "登录失败，请检查账号密码",
-              type: "warning"
-						})
-					})
+              this.$message({
+                message: "登录成功",
+                type: "success"
+              });
+              if (this.formUser.identity === "student") {
+                const { pid } = res.data;
+                window.localStorage.setItem("pid", pid);
+                this.$router.push({ name: "/courselist" });
+              } else {
+                this.$router.push({ name: "index" });
+              }
+            })
+            .catch(error => {
+              this.$message({
+                message: "登录失败，请检查账号密码",
+                type: "warning"
+              });
+            });
         }
       });
     }

@@ -9,14 +9,18 @@
       <el-col :span="1" class="right" :offset="16">
         <div class="circle">
           <div class="block">
-            <el-avatar :size="40" src class="avatar"></el-avatar>
+            <el-avatar
+              :size="40"
+              src="https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif?imageView2/1/w/80/h/80"
+              class="avatar"
+            ></el-avatar>
           </div>
         </div>
       </el-col>
       <el-col :span="2">
         <el-dropdown trigger="click" @command="setUserInfo">
           <span class="el-dropdown-link">
-            周杰伦
+            {{name}}
             <i class="el-icon-arrow-down el-icon--right"></i>
           </span>
           <el-dropdown-menu slot="dropdown">
@@ -32,6 +36,11 @@
 <script>
 export default {
   name: "head-nav",
+  data() {
+    return {
+      name: window.localStorage.getItem("name")
+    };
+  },
   methods: {
     setUserInfo(item) {
       switch (item) {
@@ -63,13 +72,13 @@ export default {
 .el-header {
   background-color: #b3c0d1;
   color: #333;
-	height: 60px;
+  height: 60px;
   text-align: center;
   width: 100%;
 }
 .middle {
   /* line-height: 40px;  */
-	height: 40px; 
+  height: 40px;
   /* background-color: #fff; */
 }
 
@@ -80,7 +89,7 @@ export default {
 .left {
   font-size: 20px;
   text-align: left;
-	margin-top: 20px;
+  margin-top: 20px;
 }
 
 .avatar {
@@ -88,8 +97,8 @@ export default {
   background-color: aqua;
 }
 .el-dropdown-link {
-	display: block;
-	margin-top: 22px;
+  display: block;
+  margin-top: 22px;
   cursor: pointer;
   /* webkit-user-select: none; */
   -moz-user-select: none;
@@ -98,6 +107,6 @@ export default {
 }
 
 .block {
-	line-height: 0
+  line-height: 0;
 }
 </style>

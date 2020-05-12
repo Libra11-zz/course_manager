@@ -21,7 +21,7 @@
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="dialogAddStudent = false">取 消</el-button>
-        <el-button type="primary" @click="submit_update">确 定</el-button>
+        <el-button type="primary" @click="submit_add">确 定</el-button>
       </div>
     </el-dialog>
     <el-dialog title="修改学生信息" :visible.sync="dialogChangeStudent" width="600px">
@@ -68,10 +68,10 @@
       <el-col :span="6">
         <el-input placeholder="请输入关键词搜索" v-model="query" class="input-with-search"></el-input>
       </el-col>
-      <el-col :span="2" :offset="13">
+      <!-- <el-col :span="2" :offset="13">
         <el-button type="success" size="small" @click="updatestudent=true">上传名单</el-button>
-      </el-col>
-      <el-col :span="2" :offset="0.5">
+      </el-col>-->
+      <el-col :span="2" :offset="15">
         <el-button type="primary" size="small" @click="dialogAddStudent=true">添加学生</el-button>
       </el-col>
     </el-row>
@@ -123,23 +123,26 @@
 export default {
   data() {
     return {
-      query: "",	// 模糊搜索
-			dialogAddStudent: false, // 增加学生弹框
-			dialogChangeStudent: false, // 修改学生弹框
-			updatestudent: false, // 上传名单的弹框
-			sort: 'descending',   // 排序参数
-			searchTimer: null,   // 模糊搜索防抖定时器
-      dialogForm: {  //  增加学生默认值
+      query: "", // 模糊搜索
+      dialogAddStudent: false, // 增加学生弹框
+      dialogChangeStudent: false, // 修改学生弹框
+      updatestudent: false, // 上传名单的弹框
+      sort: "descending", // 排序参数
+      searchTimer: null, // 模糊搜索防抖定时器
+      dialogForm: {
+        //  增加学生默认值
         pid: "",
         name: "",
         grade: ""
-			},
-			changeForm: {	// 修改学生弹框默认值
-				pid: "",
+      },
+      changeForm: {
+        // 修改学生弹框默认值
+        pid: "",
         name: "",
         grade: ""
-			},
-      paginations: {	// 分页默认参数
+      },
+      paginations: {
+        // 分页默认参数
         page_index: 1,
         total: 0,
         page_size: 10,
@@ -148,123 +151,142 @@ export default {
       },
       studentData: [], // 获取的学生数据
       tableData: [], // 表格显示的学生数据
-      formLabelWidth: "120px", // 宽度
-    }
-	},
-	
-  created () {
-    this.getStudents('',  this.sort, 'pid')  // 在页面刷新前获得表格数据， 并传默认参数用于排序
-	},
+      formLabelWidth: "120px" // 宽度
+    };
+  },
 
-	watch: { // 模糊搜索
-    query: function(val, oldval) { 
-			const that = this
-			if(this.searchTimer != null) clearTimeout(this.searchTimer) // 防抖函数
-			this.searchTimer = setTimeout(function(){
-				that.getStudents(val)
-			}, 500)
-			
-		}
-	},
-	
+  created() {
+    this.getStudents("", this.sort, "pid"); // 在页面刷新前获得表格数据， 并传默认参数用于排序
+  },
+
+  watch: {
+    // 模糊搜索
+    query: function(val, oldval) {
+      const that = this;
+      if (this.searchTimer != null) clearTimeout(this.searchTimer); // 防抖函数
+      this.searchTimer = setTimeout(function() {
+        that.getStudents(val);
+      }, 500);
+    }
+  },
+
   methods: {
-    getStudents(keyword, sort, sortItem) { //获取表格数据，排序、模糊搜索共用接口
+    getStudents(keyword, sort, sortItem) {
+      //获取表格数据，排序、模糊搜索共用接口
       this.$http
         .get("/users/allstudent", {
-          params: { // 给后台传参，用于数据库分页，再获取相应的数据
-            page_index: this.paginations.page_index,  // 当前页
-            page_size: this.paginations.page_size,    // 每页显示条数
-            keyword, 																	// 是否有搜索关键词
-						sort,																			// 排序
-            sortItem																	// 排序列
+          params: {
+            // 给后台传参，用于数据库分页，再获取相应的数据
+            page_index: this.paginations.page_index, // 当前页
+            page_size: this.paginations.page_size, // 每页显示条数
+            keyword, // 是否有搜索关键词
+            sort, // 排序
+            sortItem // 排序列
           }
         })
         .then(res => {
-          this.tableData = res.data.data  						// 给表格显示的数据赋值
-          this.paginations.total = res.data.total 		// 后台数据总数
+          this.tableData = res.data.data; // 给表格显示的数据赋值
+          this.paginations.total = res.data.total; // 后台数据总数
         })
-        .catch(err => console.log(err))
-		},
-		
-    submit_add() { // 单个增加学生
-      this.dialogAddStudent = false
+        .catch(err => console.log(err));
+    },
+
+    submit_add() {
+      // 单个增加学生
+      this.dialogAddStudent = false;
       this.$http.post("/users/addstudent", this.dialogForm).then(res => {
-				this.$message({
-					type: 'success',
-					message: '增加成功'
-				})
-				this.getStudents('', sort, 'pid')             // 刷新表格
-			})
-		},
+        this.$message({
+          type: "success",
+          message: "增加成功"
+        });
+        this.getStudents("", this.sort, "pid"); // 刷新表格
+      });
+    },
 
-		submit_change () {	// 单个修改学生提交事件
-			this.dialogChangeStudent = false
-			this.$http.post('/users/changestudent', this.changeForm).then(res => {
-				this.$message({
-					type: 'success',
-					message: '修改成功'
-				})
-				this.getStudents('', this.sort, 'pid')             // 刷新表格
-			} )
-		},
+    submit_change() {
+      // 单个修改学生提交事件
+      this.dialogChangeStudent = false;
+      this.$http.post("/users/changestudent", this.changeForm).then(res => {
+        this.$message({
+          type: "success",
+          message: "修改成功"
+        });
+        this.getStudents("", this.sort, "pid"); // 刷新表格
+      });
+    },
 
-    submit_update () { // 上传 excel 文件，整体替换学生清单
-      this.updatestudent = false
-      this.getStudents ('', this.sort, 'pid')
-		},
-		
+    submit_update() {
+      // 上传 excel 文件，整体替换学生清单
+      this.updatestudent = false;
+      this.getStudents("", this.sort, "pid");
+    },
+
     // 分页
-    handleSizeChange (page_size) {               //  每页显示数量修改
-      this.paginations.page_index = 1						//  跳转回第一页
-      this.paginations.page_size = page_size
-      this.getStudents('', this.sort, 'pid')
-		},
-		
-    handleCurrentChange (page) {									//  当前页修改
-      this.paginations.page_index = page
-      this.getStudents('', this.sort, 'pid')
-		},
-		
+    handleSizeChange(page_size) {
+      //  每页显示数量修改
+      this.paginations.page_index = 1; //  跳转回第一页
+      this.paginations.page_size = page_size;
+      this.getStudents("", this.sort, "pid");
+    },
+
+    handleCurrentChange(page) {
+      //  当前页修改
+      this.paginations.page_index = page;
+      this.getStudents("", this.sort, "pid");
+    },
+
     // 排序
-    sortpid (data) { 
-      this.paginations.page_index = 1
-      this.getStudents("", data.order, data.prop)
-		},
-		
-    handleEdit (index, data) { // 编辑单个学生信息
-			this.changeForm._id = data._id
-      this.changeForm.pid = data.pid
-      this.changeForm.name = data.name
-      this.changeForm.grade = data.grade
-			this.dialogChangeStudent = true	
-		},
+    sortpid(data) {
+      this.paginations.page_index = 1;
+      this.getStudents("", data.order, data.prop);
+    },
 
-		handleDelete (index, data) { // 删除单个学生
-			if(!confirm('确定删除吗？')){
-				return
-			}
-			this.$http.delete ('/users/deletestu', {
-				params:{
-					_id: data._id
-				}
-			}).then(res => {
-				this.$message({
-						message: '删除成功',
-						type: 'success'
-				})
-				this.getStudents('', this.sort, 'pid')
-			})
-		},
+    handleEdit(index, data) {
+      // 编辑单个学生信息
+      this.changeForm._id = data._id;
+      this.changeForm.pid = data.pid;
+      this.changeForm.name = data.name;
+      this.changeForm.grade = data.grade;
+      this.dialogChangeStudent = true;
+    },
 
-		debounce (fn, time) {  // 防抖函数
-			let timeout = null
-			return function () {
-				if (timeout != null) clearTimeout(timeout)
-				timeout = setTimeout(fn, time)
-			}
-		}
-	}
-}
+    handleDelete(index, data) {
+      console.log(data);
+      let _this = this;
+      // 删除单个学生
+      if (!confirm("确定删除吗？")) {
+        return;
+      }
+      this.$http
+        .post("/users/deletestu", {
+          id: data._id
+        })
+        .then(res => {
+          this.$message({
+            message: "删除成功",
+            type: "success"
+          });
+          this.getStudents("", _this.sort, "pid");
+        })
+        .catch(err => {
+          console.log(err);
+          this.$message({
+            message: "删除失败",
+            type: "error"
+          });
+        });
+    },
+
+    debounce(fn, time) {
+      // 防抖函数
+      let timeout = null;
+      return function() {
+        if (timeout != null) clearTimeout(timeout);
+        timeout = setTimeout(fn, time);
+      };
+    }
+  }
+};
 </script>
 
 <style>

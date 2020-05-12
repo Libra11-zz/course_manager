@@ -11,7 +11,7 @@
         <el-menu-item index="students">学生列表</el-menu-item>
         <el-menu-item index="teachers">教师列表</el-menu-item>
       </el-submenu>
-      <el-submenu index="2">
+      <!-- <el-submenu index="2">
         <template slot="title">
           <div class="aside">
             <i class="el-icon-s-order"></i>
@@ -20,8 +20,8 @@
         </template>
         <el-menu-item index="roles">角色列表</el-menu-item>
         <el-menu-item index="accesss">权限列表</el-menu-item>
-      </el-submenu>
-      <el-submenu index="3">
+      </el-submenu>-->
+      <el-submenu index="2">
         <template slot="title">
           <div class="aside">
             <i class="el-icon-s-tools"></i>
@@ -30,7 +30,7 @@
         </template>
         <el-menu-item index="allcourse">课程列表</el-menu-item>
       </el-submenu>
-      <el-submenu index="4">
+      <!-- <el-submenu index="3">
         <template slot="title">
           <div class="aside">
             <i class="el-icon-s-tools"></i>
@@ -38,7 +38,7 @@
           </div>
         </template>
         <el-menu-item index="#">选课情况</el-menu-item>
-      </el-submenu>
+      </el-submenu>-->
     </el-menu>
   </el-aside>
 </template>
