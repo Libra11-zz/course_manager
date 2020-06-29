@@ -1,12 +1,14 @@
 <template>
   <el-header>
     <el-row>
-      <el-col :span="5">
+      <el-col :span="21">
         <div class="grid-content left">
-          <h3>选课后台管理系统</h3>
+          <div class="title">
+            <i class="el-icon-date"></i> 选课后台管理系统
+          </div>
         </div>
       </el-col>
-      <el-col :span="1" class="right" :offset="16">
+      <el-col :span="1" class="right">
         <div class="circle">
           <div class="block">
             <el-avatar
@@ -20,7 +22,6 @@
       <el-col :span="2">
         <el-dropdown trigger="click" @command="setUserInfo">
           <span class="el-dropdown-link">
-            {{name}}
             <i class="el-icon-arrow-down el-icon--right"></i>
           </span>
           <el-dropdown-menu slot="dropdown">
@@ -36,12 +37,11 @@
 <script>
 export default {
   name: "head-nav",
-  data() {
-    return {
-      name: window.localStorage.getItem("name")
-    };
-  },
+  props: ["isCollapse"],
   methods: {
+    setIsCollapse() {
+      this.$emit("setIsCollapse");
+    },
     setUserInfo(item) {
       switch (item) {
         case "info":
@@ -57,8 +57,8 @@ export default {
       this.$router.push("/infoshow");
     },
     logout() {
-      // 清除 token
-      localStorage.removeItem("token");
+      // 清除 localStorage
+      localStorage.clear();
       // 设置 vuex store
       // this.$store.dispatch("clearCurrentState");
       // 跳转
@@ -70,7 +70,6 @@ export default {
 
 <style scoped>
 .el-header {
-  background-color: #b3c0d1;
   color: #333;
   height: 60px;
   text-align: center;
@@ -88,8 +87,16 @@ export default {
 
 .left {
   font-size: 20px;
-  text-align: left;
+  text-align: center;
   margin-top: 20px;
+}
+
+.left .title {
+  font-size: 24px;
+  display: inline-block;
+  background: linear-gradient(to right, #409eff, #ff9900);
+  -webkit-background-clip: text;
+  color: transparent;
 }
 
 .avatar {

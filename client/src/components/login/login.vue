@@ -97,9 +97,10 @@ export default {
             .then(res => {
               console.log(res);
               // token
-              const { token, name } = res.data;
+              const { token, name, identity } = res.data;
               window.localStorage.setItem("token", token);
               window.localStorage.setItem("name", name);
+              window.localStorage.setItem("identity", identity);
 
               this.$message({
                 message: "登录成功",
@@ -108,6 +109,8 @@ export default {
               if (this.formUser.identity === "student") {
                 const { pid } = res.data;
                 window.localStorage.setItem("pid", pid);
+                this.$router.push({ name: "/courselist" });
+              } else if (this.formUser.identity === "teacher") {
                 this.$router.push({ name: "/courselist" });
               } else {
                 this.$router.push({ name: "index" });

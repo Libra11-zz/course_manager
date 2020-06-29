@@ -7,7 +7,10 @@ import MyBread from '@/components/cuscom/MyBread.vue'
 
 import ElementUI from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
-
+import Moment from 'moment'
+Vue.filter('comverTime', function (data, format) {
+  return Moment(data).format(format)
+})
 // 使用 vue 插件
 Vue.use(ElementUI)
 // 使用 axios

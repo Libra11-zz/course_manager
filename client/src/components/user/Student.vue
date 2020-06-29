@@ -1,5 +1,5 @@
 <template>
-  <el-card id="box-card">
+  <div id="box-card">
     <el-dialog title="学生信息" :visible.sync="dialogAddStudent" width="600px">
       <el-form :model="dialogForm" label-position="right" label-width="80px">
         <el-form-item label="学号">
@@ -65,13 +65,19 @@
     </el-dialog>
     <my-bread level1="用户管理" level2="学生列表"></my-bread>
     <el-row class="search_row">
-      <el-col :span="6">
-        <el-input placeholder="请输入关键词搜索" v-model="query" class="input-with-search"></el-input>
+      <el-col :span="4">
+        <el-input
+          placeholder="请输入关键词搜索"
+          size="small"
+          style="padding-left: 20px"
+          v-model="query"
+          class="input-with-search"
+        ></el-input>
       </el-col>
       <!-- <el-col :span="2" :offset="13">
         <el-button type="success" size="small" @click="updatestudent=true">上传名单</el-button>
       </el-col>-->
-      <el-col :span="2" :offset="15">
+      <el-col :span="2" :offset="18">
         <el-button type="primary" size="small" @click="dialogAddStudent=true">添加学生</el-button>
       </el-col>
     </el-row>
@@ -91,17 +97,19 @@
           <el-table-column prop="pid" label="学号" sortable="custom" width="200" align="center"></el-table-column>
           <el-table-column prop="name" label="姓名" width="200" align="center"></el-table-column>
           <el-table-column prop="grade" label="年级" width="200" align="center"></el-table-column>
-          <el-table-column prop="firstpwd" label="初始密码" width="200" align="center"></el-table-column>
+          <el-table-column prop="firstpwd" label="初始密码" width="200" align="center">
+            <template>111111</template>
+          </el-table-column>
           <el-table-column label="操作" align="center">
             <template slot-scope="scope">
-              <el-button size="mini" @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
-              <el-button size="mini" type="danger" @click="handleDelete(scope.$index, scope.row)">删除</el-button>
+              <el-button size="mini" type="text" @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
+              <el-button size="mini" type="text" @click="handleDelete(scope.$index, scope.row)">删除</el-button>
             </template>
           </el-table-column>
         </el-table>
       </el-col>
     </el-row>
-    <el-row style="margin-top:15px">
+    <el-row style="margin-top:10px">
       <el-col :span="24">
         <div class="pagination">
           <el-pagination
@@ -116,7 +124,7 @@
         </div>
       </el-col>
     </el-row>
-  </el-card>
+  </div>
 </template>
 
 <script>

@@ -1,9 +1,15 @@
 <template>
-  <el-card id="box-card">
+  <div id="box-card">
     <my-bread level1="课程管理" level2="课程列表"></my-bread>
     <el-row class="search_row">
-      <el-col :span="6">
-        <el-input placeholder="请输入关键词搜索" v-model="query" class="input-with-search"></el-input>
+      <el-col :span="4">
+        <el-input
+          size="small"
+          style="padding-left: 20px"
+          placeholder="请输入关键词搜索"
+          v-model="query"
+          class="input-with-search"
+        ></el-input>
       </el-col>
     </el-row>
     <el-row>
@@ -21,15 +27,18 @@
           <el-table-column prop="pid" label="课程代码" sortable="custom" width="100" align="center"></el-table-column>
           <el-table-column prop="name" label="课程名称" width="150" align="center"></el-table-column>
           <el-table-column prop="tname" label="授课教师" width="120" align="center"></el-table-column>
-          <el-table-column prop="time" label="开课时间" width="150" align="center"></el-table-column>
+          <el-table-column prop="time" label="开课时间" width="150" align="center">
+            <template slot-scope="scope">{{scope.row.time | comverTime('YYYY-MM-DD ')}}</template>
+          </el-table-column>
           <el-table-column prop="num" label="可报名人数" width="120" align="center"></el-table-column>
           <el-table-column prop="lnum" label="剩余人数" width="120" align="center"></el-table-column>
           <el-table-column prop="grade" label="报名年级" width="200" align="center"></el-table-column>
-          <el-table-column label="操作" align="center" width="150">
+          <el-table-column label="操作" align="center" width="150" v-if="identity==='student'">
             <template slot-scope="scope">
               <el-button
                 :disabled="scope.row.yibaoming.includes(pid)"
                 size="mini"
+                type="text"
                 @click="selectCourse(scope.row._id, scope.row.num-(scope.row.yibaoming.length+1))"
               >选课</el-button>
             </template>
@@ -37,7 +46,7 @@
         </el-table>
       </el-col>
     </el-row>
-    <el-row style="margin-top:15px">
+    <el-row style="margin-top:10px">
       <el-col :span="24">
         <div class="pagination">
           <el-pagination
@@ -52,13 +61,14 @@
         </div>
       </el-col>
     </el-row>
-  </el-card>
+  </div>
 </template>
 
 <script>
 export default {
   data() {
     return {
+      identity: window.localStorage.getItem("identity"),
       query: "", // 模糊搜索
       dialogAddCourse: false, // 增加课程弹框
       dialogChangeCourse: false, // 修改课程弹框

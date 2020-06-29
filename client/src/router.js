@@ -4,20 +4,18 @@ import Login from '@/components/login/login'
 import Index from '@/components/home/Index'
 import Student from '@/components/user/Student'
 import Teacher from '@/components/user/Teacher'
-import Access from '@/components/admin/Access'
-import Role from '@/components/admin/Role'
-import StudentIndex from '@/components/student/Index'
 import CourseList from '@/components/student/CourseList'
 import MyCourse from '@/components/student/MyCourse'
 import AllCourse from '@/components/course/AllCourse'
+import CourseStatistics from '@/components/course/CourseStatistics'
 
 Vue.use(Router)
 
-const router = new Router ({
-  mode: 'history',
-  base: process.env.BASE_URL,
-  routes: [
-    {
+const router = new Router({
+	mode: 'history',
+	base: process.env.BASE_URL,
+	routes: [
+		{
 			name: 'login',
 			path: '/login',
 			component: Login
@@ -26,61 +24,78 @@ const router = new Router ({
 			name: 'index',
 			path: '/',
 			component: Index,
+			redirect: '/allcourse',
 			children: [
 				{
 					name: 'students',
 					path: 'students',
-					component: Student
+					component: Student,
+					meta: {
+						roles: ["admin"]
+					}
 				},
 				{
 					name: 'teachers',
 					path: 'teachers',
-					component: Teacher
-				},
-				{
-					name: 'accesss',
-					path: 'accesss',
-					component: Access
-				},
-				{
-					name: 'roles',
-					path: 'roles',
-					component: Role
+					component: Teacher,
+					meta: {
+						roles: ["admin"]
+					}
 				},
 				{
 					name: 'allcourse',
 					path: 'allcourse',
-					component: AllCourse
-				}
-			]
-		},
-		{
-			name: 'student',
-			path: '/student',
-			component: StudentIndex,
-			children: [
+					component: AllCourse,
+					meta: {
+						roles: ["admin"]
+					}
+				},
 				{
 					name: '/courselist',
 					path: '/courselist',
-					component: CourseList
+					component: CourseList,
+					meta: {
+						roles: ["student", "teacher"]
+					}
 				},
 				{
 					name: '/mycourse',
 					path: '/mycourse',
-					component: MyCourse
+					component: MyCourse,
+					meta: {
+						roles: ["student"]
+					}
+				},
+				{
+					name: '/courseStatistics',
+					path: '/courseStatistics',
+					component: CourseStatistics,
+					meta: {
+						roles: ["student", "admin", "teacher"]
+					}
 				},
 			]
-		}
-  ]
+		},
+	]
 })
 
 // 路由守卫
 router.beforeEach((to, from, next) => {
 	const isLogin = localStorage.token
+	const role = localStorage.identity
 	if (to.path == '/login') {
 		next()
 	} else {
-		isLogin ? next() : next('/login')
+		if (isLogin) {
+			if (to.meta.roles.includes(role)) {
+				next();
+			} else {
+				// TODO 跳转到无权限页面
+				alert('您没有权限访问该页面')
+			}
+		} else {
+			next('/login')
+		}
 	}
-}) 
+})
 export default router

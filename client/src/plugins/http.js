@@ -7,6 +7,7 @@ const myHttpServer = {}
 myHttpServer.install = function (Vue) {
 
 	axios.defaults.baseURL = 'http://localhost:3000/api'
+	// axios.defaults.baseURL = 'http://123.207.108.119:3000/api'
 	// 添加实例方法
 	Vue.prototype.$http = axios
 }

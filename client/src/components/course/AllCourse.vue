@@ -1,7 +1,7 @@
 <template>
-  <el-card id="box-card">
+  <div id="box-card">
     <el-dialog title="课程信息" :visible.sync="dialogAddCourse" width="600px">
-      <el-form :model="dialogForm" label-position="right" label-width="80px">
+      <el-form :inline="true" :model="dialogForm" label-position="right" label-width="80px">
         <el-form-item label="课程代码">
           <el-input v-model="dialogForm.pid"></el-input>
         </el-form-item>
@@ -12,7 +12,13 @@
           <el-input v-model="dialogForm.tname"></el-input>
         </el-form-item>
         <el-form-item label="开课时间">
-          <el-input v-model="dialogForm.time"></el-input>
+          <!-- <el-input v-model="dialogForm.time"></el-input> -->
+          <el-date-picker
+            style="width: 178px"
+            v-model="dialogForm.time"
+            type="date"
+            placeholder="选择日期"
+          ></el-date-picker>
         </el-form-item>
         <el-form-item label="报名人数">
           <el-input v-model="dialogForm.num"></el-input>
@@ -27,7 +33,7 @@
       </div>
     </el-dialog>
     <el-dialog title="修改教师信息" :visible.sync="dialogChangeCourse" width="600px">
-      <el-form :model="changeForm" label-position="right" label-width="80px">
+      <el-form :inline="true" :model="changeForm" label-position="right" label-width="80px">
         <el-form-item label="课程代码">
           <el-input v-model="changeForm.pid"></el-input>
         </el-form-item>
@@ -38,7 +44,13 @@
           <el-input v-model="changeForm.tname"></el-input>
         </el-form-item>
         <el-form-item label="开课时间">
-          <el-input v-model="changeForm.time"></el-input>
+          <el-date-picker
+            style="width: 178px"
+            v-model="changeForm.time"
+            type="date"
+            placeholder="选择日期"
+          ></el-date-picker>
+          <!-- <el-input v-model="changeForm.time"></el-input> -->
         </el-form-item>
         <el-form-item label="报名人数">
           <el-input v-model="changeForm.num"></el-input>
@@ -54,10 +66,16 @@
     </el-dialog>
     <my-bread level1="课程管理" level2="课程列表"></my-bread>
     <el-row class="search_row">
-      <el-col :span="6">
-        <el-input placeholder="请输入关键词搜索" v-model="query" class="input-with-search"></el-input>
+      <el-col :span="4">
+        <el-input
+          placeholder="请输入关键词搜索"
+          style="margin-left: 20px;"
+          size="small"
+          v-model="query"
+          class="input-with-search"
+        ></el-input>
       </el-col>
-      <el-col :span="2" :offset="15">
+      <el-col :span="2" :offset="18">
         <el-button type="primary" size="small" @click="dialogAddCourse = true">添加课程</el-button>
       </el-col>
     </el-row>
@@ -68,7 +86,7 @@
           stripe
           :height="457"
           size="mini"
-          style="width: 100%"
+          style="width: 100%;border-radius: 2px"
           @sort-change="sortpid"
           :default-sort="{prop: 'pid', order: 'descending'}"
         >
@@ -76,20 +94,22 @@
           <el-table-column prop="pid" label="课程代码" sortable="custom" width="100" align="center"></el-table-column>
           <el-table-column prop="name" label="课程名称" width="150" align="center"></el-table-column>
           <el-table-column prop="tname" label="授课教师" width="120" align="center"></el-table-column>
-          <el-table-column prop="time" label="开课时间" width="150" align="center"></el-table-column>
+          <el-table-column prop="time" label="开课时间" width="150" align="center">
+            <template slot-scope="scope">{{scope.row.time | comverTime('YYYY-MM-DD ')}}</template>
+          </el-table-column>
           <el-table-column prop="num" label="可报名人数" width="120" align="center"></el-table-column>
           <el-table-column prop="lnum" label="剩余人数" width="120" align="center"></el-table-column>
           <el-table-column prop="grade" label="报名年级" width="200" align="center"></el-table-column>
           <el-table-column label="操作" align="center" width="150">
             <template slot-scope="scope">
-              <el-button size="mini" @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
-              <el-button size="mini" type="danger" @click="handleDelete(scope.$index, scope.row)">删除</el-button>
+              <el-button size="mini" type="text" @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
+              <el-button size="mini" type="text" @click="handleDelete(scope.$index, scope.row)">删除</el-button>
             </template>
           </el-table-column>
         </el-table>
       </el-col>
     </el-row>
-    <el-row style="margin-top:15px">
+    <el-row style="margin-top:10px">
       <el-col :span="24">
         <div class="pagination">
           <el-pagination
@@ -104,7 +124,7 @@
         </div>
       </el-col>
     </el-row>
-  </el-card>
+  </div>
 </template>
 
 <script>
@@ -244,22 +264,25 @@ export default {
 
     handleDelete(index, data) {
       // 删除单个课程
-      if (!confirm("确定删除吗？")) {
-        return;
-      }
-      this.$http
-        .delete("/users/deletecou", {
-          params: {
-            _id: data._id
-          }
-        })
-        .then(res => {
-          this.$message({
-            message: "删除成功",
-            type: "success"
-          });
-          this.getCourses("", this.sort, "pid");
-        });
+      const _this = this;
+      this.$alert("删除课程", "确定删除吗？", {
+        confirmButtonText: "确定",
+        callback: action => {
+          _this.$http
+            .delete("/users/deletecou", {
+              params: {
+                _id: data._id
+              }
+            })
+            .then(res => {
+              _this.$message({
+                message: "删除成功",
+                type: "success"
+              });
+              this.getCourses("", this.sort, "pid");
+            });
+        }
+      });
     },
 
     debounce(fn, time) {
@@ -277,18 +300,27 @@ export default {
 <style>
 #box-card {
   height: 100%;
+  width: 100%;
   border: none;
 }
 
 .search_row {
   line-height: 60px;
-  margin: 20px 0 20px 0;
+  margin: 10px 0 10px 0;
+  border-radius: 2px;
+  background-color: #fff;
 }
 
 #dialogAddStudent {
   width: 200px;
 }
-
+.pagination {
+  display: flex;
+  justify-content: center;
+  padding: 10px 10px;
+  border-radius: 2px;
+  background-color: #fff;
+}
 #bold {
   color: black;
   font-weight: bold;
