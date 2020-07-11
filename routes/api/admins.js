@@ -13,7 +13,7 @@ const Admin = require('../../models/Admin');
 // @access public
 router.post('/adminregister', (req, res) => {
   // 查询数据库中是否拥有邮箱
-  Student.findOne({ pid: req.body.pid }).then(admin => {
+  Admin.findOne({ pid: req.body.pid }).then(admin => {
     if (admin) {
       return res.status(400).json('id已被注册!');
     } else {
@@ -74,7 +74,8 @@ router.post('/adminlogin', (req, res) => {
           res.json({
             success: true,
             name: admin.name,
-            token: 'Bearer ' + token
+            token: 'Bearer ' + token,
+            identity: admin.identity
           });
         });
         // res.json({msg:"success"});

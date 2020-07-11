@@ -85,7 +85,8 @@ router.post("/studentlogin", (req, res) => {
             success: true,
             name: student.name,
             pid: student.pid,
-            token: "Bearer " + token
+            token: "Bearer " + token,
+            identity: student.identity
           });
         });
         // res.json({msg:"success"});

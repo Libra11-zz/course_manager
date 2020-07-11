@@ -77,7 +77,8 @@ router.post('/teacherlogin', (req, res) => {
           res.json({
             success: true,
             name: teacher.name,
-            token: 'Bearer ' + token
+            token: 'Bearer ' + token,
+            identity: teacher.identity
           });
         });
         // res.json({msg:"success"});
