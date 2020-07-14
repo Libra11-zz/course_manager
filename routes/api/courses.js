@@ -26,6 +26,7 @@ router.post(
     courseFields.lnum = req.body.num;
     if (req.body.info) courseFields.info = req.body.info;
     if (req.body.grade) courseFields.grade = req.body.grade;
+    if (req.body.data) courseFields.data = req.body.data;
     new Course(courseFields).save().then((course) => {
       res.json(course);
     });
@@ -195,6 +196,7 @@ router.post(
       courseFields.lnum = req.body.num - result.yibaoming.length;
       if (req.body.info) courseFields.info = req.body.info;
       if (req.body.grade) courseFields.grade = req.body.grade;
+      if (req.body.data) courseFields.data = req.body.data;
       Course.findOneAndUpdate(
         { pid: req.body.pid },
         { $set: courseFields },

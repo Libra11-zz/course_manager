@@ -26,13 +26,16 @@
         <el-form-item label="报名年级">
           <el-input v-model="dialogForm.grade"></el-input>
         </el-form-item>
+        <el-form-item label="课程资料">
+          <el-input v-model="dialogForm.data" placeholder="网盘地址"></el-input>
+        </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="dialogAddCourse = false">取 消</el-button>
         <el-button type="primary" @click="submit_add">确 定</el-button>
       </div>
     </el-dialog>
-    <el-dialog title="修改教师信息" :visible.sync="dialogChangeCourse" width="600px">
+    <el-dialog title="修改课程信息" :visible.sync="dialogChangeCourse" width="600px">
       <el-form :inline="true" :model="changeForm" label-position="right" label-width="80px">
         <el-form-item label="课程代码">
           <el-input v-model="changeForm.pid"></el-input>
@@ -57,6 +60,9 @@
         </el-form-item>
         <el-form-item label="报名年级">
           <el-input v-model="changeForm.grade"></el-input>
+        </el-form-item>
+        <el-form-item label="课程资料">
+          <el-input v-model="changeForm.data"></el-input>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -91,15 +97,25 @@
           :default-sort="{prop: 'pid', order: 'descending'}"
         >
           <el-table-column type="index" width="50" align="center"></el-table-column>
-          <el-table-column prop="pid" label="课程代码" sortable="custom" width="100" align="center"></el-table-column>
-          <el-table-column prop="name" label="课程名称" width="150" align="center"></el-table-column>
-          <el-table-column prop="tname" label="授课教师" width="120" align="center"></el-table-column>
+          <el-table-column prop="pid" label="课程代码" sortable="custom" width="150" align="center"></el-table-column>
+          <el-table-column prop="name" label="课程名称" width="100" align="center"></el-table-column>
+          <el-table-column prop="tname" label="授课教师" width="100" align="center"></el-table-column>
           <el-table-column prop="time" label="开课时间" width="150" align="center">
             <template slot-scope="scope">{{scope.row.time | comverTime('YYYY-MM-DD ')}}</template>
           </el-table-column>
-          <el-table-column prop="num" label="可报名人数" width="120" align="center"></el-table-column>
-          <el-table-column prop="lnum" label="剩余人数" width="120" align="center"></el-table-column>
-          <el-table-column prop="grade" label="报名年级" width="200" align="center"></el-table-column>
+          <el-table-column prop="num" label="可报名人数" width="100" align="center"></el-table-column>
+          <el-table-column prop="lnum" label="剩余人数" width="100" align="center"></el-table-column>
+          <el-table-column prop="grade" label="报名年级" width="100" align="center"></el-table-column>
+          <el-table-column label="资料" align="center" width="150">
+            <template slot-scope="scope">
+              <a
+                style="color: #409EFF;cursor:pointer; text-decoration:none"
+                :href="scope.row.data"
+                v-if="scope.row.data"
+              >下载</a>
+              <div v-else>无</div>
+            </template>
+          </el-table-column>
           <el-table-column label="操作" align="center" width="150">
             <template slot-scope="scope">
               <el-button size="mini" type="text" @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
@@ -144,7 +160,8 @@ export default {
         grade: "",
         time: "",
         num: "",
-        lnum: ""
+        lnum: "",
+        data: ""
       },
       changeForm: {
         // 修改课程弹框默认值
@@ -154,7 +171,8 @@ export default {
         grade: "",
         time: "",
         num: "",
-        lnum: ""
+        lnum: "",
+        data: ""
       },
       paginations: {
         // 分页默认参数
@@ -200,7 +218,9 @@ export default {
           }
         })
         .then(res => {
-          this.tableData = res.data.data; // 给表格显示的数据赋值
+          this.tableData = res.data.data;
+          console.log("getCourses -> this.tableData", this.tableData);
+          // 给表格显示的数据赋值
           this.paginations.total = res.data.total; // 后台数据总数
         })
         .catch(err => console.log(err));
@@ -259,6 +279,7 @@ export default {
       this.changeForm.num = data.num;
       this.changeForm.grade = data.grade;
       this.changeForm.time = data.time;
+      this.changeForm.data = data.data;
       this.dialogChangeCourse = true;
     },
 

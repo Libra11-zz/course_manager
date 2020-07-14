@@ -2,7 +2,7 @@
   <el-breadcrumb class="my-bread" separator-class="el-icon-arrow-right">
     <el-breadcrumb-item>首页</el-breadcrumb-item>
     <el-breadcrumb-item>{{level1}}</el-breadcrumb-item>
-    <el-breadcrumb-item>{{level2}}</el-breadcrumb-item>
+    <el-breadcrumb-item v-if="level2">{{level2}}</el-breadcrumb-item>
   </el-breadcrumb>
 </template>
 

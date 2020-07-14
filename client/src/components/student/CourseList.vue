@@ -33,6 +33,16 @@
           <el-table-column prop="num" label="可报名人数" width="120" align="center"></el-table-column>
           <el-table-column prop="lnum" label="剩余人数" width="120" align="center"></el-table-column>
           <el-table-column prop="grade" label="报名年级" width="200" align="center"></el-table-column>
+          <el-table-column label="资料" align="center" width="150">
+            <template slot-scope="scope">
+              <a
+                style="color: #409EFF;cursor:pointer; text-decoration:none"
+                :href="scope.row.data"
+                v-if="scope.row.data"
+              >下载</a>
+              <div v-else>无</div>
+            </template>
+          </el-table-column>
           <el-table-column label="操作" align="center" width="150" v-if="identity==='student'">
             <template slot-scope="scope">
               <el-button
