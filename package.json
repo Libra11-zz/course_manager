@@ -19,7 +19,7 @@
     "cors": "^2.8.5",
     "date-format": "^2.1.0",
     "ejs": "^2.6.2",
-    "express": "^4.17.1",
+    "express": "^4.17.3",
     "express-session": "^1.16.2",
     "formidable": "^1.2.1",
     "gravatar": "^1.8.0",
